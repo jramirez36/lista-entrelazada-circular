@@ -209,6 +209,29 @@ class Administracion {
                 aux = aux._siguiente;
             }
     }
+    vuelta()
+    {
+        this._tabla.innerHTML = '';
+        let etiquetaP = [];
+        let aux = this._lista;
+        aux._horaSalida = this._final._horaLlegada; 
+        let auxc = 0;
+        for (let i = 0; i < this._contador; i++) 
+        {
+            etiquetaP[i] = document.createElement('p');
+        }
+        while(auxc === 0 || aux != this._inicio && auxc < this._contador)
+            {
+                etiquetaP[auxc].innerHTML = aux.toString();
+                if(aux._siguiente._horaSalida < aux._horaLlegada)
+                {
+                    aux._siguiente._horaSalida = aux._horaLlegada;
+                }
+                this._tabla.appendChild(etiquetaP[auxc]);
+                auxc++;
+                aux = aux._siguiente;
+            }
+    }
 
     get articulo() 
     {
@@ -288,4 +311,7 @@ document.querySelector('#eliminar').addEventListener('click', () => {
 document.querySelector('#selecionarInicio').addEventListener('click', () => {
     let inicio = Number(document.querySelector('#Inicio').value);
     almacen.selecionarInicio(inicio);
+});
+document.querySelector('#vuelta').addEventListener('click', () => {
+    almacen.vuelta();
 });
