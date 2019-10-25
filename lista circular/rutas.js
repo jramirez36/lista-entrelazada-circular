@@ -129,7 +129,9 @@ class Administracion {
                             let contenedor = aux._siguiente;
                             console.log("llegue a eliminar");
                             aux._siguiente = aux._siguiente._siguiente;
-                            aux._Tiempo = aux._Tiempo + contenedor._Tiempo;
+                            aux._Tiempo = contenedor._Tiempo;
+                            aux._horaSalida = contenedor._horaSalida;
+                            aux._anterior._Tiempo = aux._Tiempo + contenedor._Tiempo;
                         }
                         aux = aux._siguiente;
                 }
@@ -198,6 +200,10 @@ class Administracion {
         while(auxc === 0 || aux != this._inicio && auxc < this._contador)
             {
                 etiquetaP[auxc].innerHTML = aux.toString();
+                if(aux._siguiente._horaSalida < aux._horaLlegada)
+                {
+                    aux._siguiente._horaSalida = aux._horaLlegada;
+                }
                 this._tabla.appendChild(etiquetaP[auxc]);
                 auxc++;
                 aux = aux._siguiente;
@@ -220,6 +226,7 @@ class Ruta{
         this._codigo = codigo;
         this._nombre = nombre;
         this._horaSalida = horaSalida;
+        this._horaLlegada;
         this._Tiempo = Tiempo;
         this._descripcion = descripcion;
     }
@@ -233,8 +240,7 @@ class Ruta{
         let arrayTiempo = tiempo.split(":");
         let hora = Number(arrayTiempo[0]);
         let minuto = Number(arrayTiempo[1]) + this._Tiempo;
-        console.log(minuto);
-        while(minuto > 60 || hora > 24)
+        while(minuto >= 60 || hora > 24)
         {
             if(minuto >= 60)
             {
@@ -254,8 +260,9 @@ class Ruta{
             {
                 minuto = "0" + minuto;
             }
-        tiempo = hora + ":" + minuto;
-        return 'Código: ' + this._codigo + ' Nombre: ' + this._nombre + ' Hora de salida: ' + this._horaSalida + ' Llegada: ' + tiempo + ' Descripción: ' + this._descripcion ;
+            this._horaLlegada = hora + ":" + minuto;
+        document.querySelector('#horaSalida').value = this._horaLlegada;
+        return 'Código: ' + this._codigo + ' Nombre: ' + this._nombre + ' Hora de salida: ' + this._horaSalida + ' Llegada: ' + this._horaLlegada + ' Descripción: ' + this._descripcion ;
     }
 }
 //botones
