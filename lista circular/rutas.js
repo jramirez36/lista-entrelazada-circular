@@ -11,7 +11,7 @@ class Administracion {
     }
     agregar(llave, nombre, horaSalida, Tiempo, descripcion) 
     {   
-                let aux = 0;
+                let aux;
                 this._llave = llave;
                 if (llave === '' || llave === (this._contador + 1) || llave > this._contador) 
                 {
@@ -23,7 +23,7 @@ class Administracion {
                     }
                     else
                     {
-                        while(aux._siguiente === this._inicio)
+                        while(aux._siguiente != this._inicio && this._contador > 1)
                             {
                                 aux = aux._siguiente;
                             }
@@ -121,13 +121,15 @@ class Administracion {
             }
             else
             {
-                while(aux._siguiente === this._inicio)
+                aux = aux._siguiente;
+                while(aux != this._inicio)
                 {
                     if(aux._siguiente._codigo === codigoEliminar)
                         {
+                            let contenedor = aux._siguiente;
                             console.log("llegue a eliminar");
                             aux._siguiente = aux._siguiente._siguiente;
-                            aux._siguiente._Tiempo += aux._siguiente._siguiente._Tiempo;
+                            aux._Tiempo = aux._Tiempo + contenedor._Tiempo;
                         }
                         aux = aux._siguiente;
                 }
@@ -170,7 +172,7 @@ class Administracion {
         {
             etiquetaP[i] = document.createElement('p');
         }
-        while(aux != this._inicio || auxc === 0 && auxc < this._contador)
+        while(auxc === 0 || aux != this._inicio && auxc < this._contador)
             {
                 etiquetaP[auxc].innerHTML = aux.toString();
                 this._tabla.appendChild(etiquetaP[auxc]);
@@ -198,7 +200,7 @@ class Administracion {
                 etiquetaP[auxc].innerHTML = aux.toString();
                 this._tabla.appendChild(etiquetaP[auxc]);
                 auxc++;
-                aux = aux._anterior;
+                aux = aux._siguiente;
             }
     }
 
@@ -213,15 +215,13 @@ class Administracion {
 }
 //impreciones
 class Ruta{
-    constructor(codigo, nombre, horaSalida, Tiempo, descripcion)
+    constructor(codigo, nombre, horaSalida, Tiempo, descripcion, siguiente = null , anterior = null)
     {
         this._codigo = codigo;
         this._nombre = nombre;
         this._horaSalida = horaSalida;
         this._Tiempo = Tiempo;
         this._descripcion = descripcion;
-        this._siguiente;
-        this._anterior;
     }
     get codigo()
     {
@@ -229,7 +229,33 @@ class Ruta{
     }
     toString()
     {
-        return 'Código: ' + this._codigo + ' Nombre: ' + this._nombre + ' Hora de salida: ' + this._horaSalida + ' Llegada: ' + (this._horaSalida + this._Tiempo) + ' Descripción: ' + this._descripcion ;
+        let tiempo = this._horaSalida;
+        let arrayTiempo = tiempo.split(":");
+        let hora = Number(arrayTiempo[0]);
+        let minuto = Number(arrayTiempo[1]) + this._Tiempo;
+        console.log(minuto);
+        while(minuto > 60 || hora > 24)
+        {
+            if(minuto >= 60)
+            {
+                hora++;
+                minuto = minuto - 60;
+            }
+            else if(hora > 24)
+            {
+                hora = hora - 24;
+            }
+        }
+            if (hora < 10)
+            {
+                hora = "0" + hora;
+            }
+            if (minuto < 10)
+            {
+                minuto = "0" + minuto;
+            }
+        tiempo = hora + ":" + minuto;
+        return 'Código: ' + this._codigo + ' Nombre: ' + this._nombre + ' Hora de salida: ' + this._horaSalida + ' Llegada: ' + tiempo + ' Descripción: ' + this._descripcion ;
     }
 }
 //botones
@@ -237,8 +263,8 @@ var almacen = new Administracion(document.querySelector('#tablaRutas'), Number(d
 document.querySelector('#agregar').addEventListener('click', () => {
     let llave = Number(document.querySelector('#codigo').value);
     let nombre = document.querySelector('#nombre').value;
-    let horaSalida = document.querySelector('#precio').value;
-    let Tiempo = document.querySelector('#cantidad').value;
+    let horaSalida = document.querySelector('#horaSalida').value;
+    let Tiempo = Number(document.querySelector('#Tiempo').value);
     let descripcion = document.querySelector('#descripcion').value;
 
     almacen.agregar(llave, nombre, horaSalida, Tiempo, descripcion);
